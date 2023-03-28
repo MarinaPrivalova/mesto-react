@@ -1,30 +1,63 @@
+import React from 'react';
 import Header from './Header';
 import Main from './Main';
-import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import Footer from './Footer';
 
 function App() {
+  /**Переменные состояния попапов*/
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  /**Переменные состояния для попапа открытия карточки*/
+  const [selectedCard, setSelectedCard] = React.useState(null);
+
+  function handleEditAvatarClick() {
+    setIsEditAvatarPopupOpen(true);
+  };
+  function handleEditProfileClick() {
+    setIsEditProfilePopupOpen(true);
+  }
+  function handleAddPlaceClick() {
+    setIsAddPlacePopupOpen(true);
+  }
+  function handleCardClick(card) {
+    setSelectedCard(card);
+  }
+  function closePopups() {
+    setIsEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setSelectedCard(null)
+  }
+
   return (
     <div className="page">
       <div className="page__container">
         <Header />
-        <Main />
-        <Footer />
+        <Main
+          onEditAvatar={handleEditAvatarClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onCardClick={handleCardClick}
+        />
         <PopupWithForm 
           name="edit"
           title="Редактировать профиль"
           textsubmit="Сохранить"
+          isOpen={isEditProfilePopupOpen}
+          onClose={closePopups}
           children={
             <fieldset className="form__set">
               <label className="form__field">
                 <input className="form__input form__input_type_user-name" type="text" name="name" id="username" placeholder="Укажите своё имя" 
-                  minlength="2" maxlength="40" required />
+                  minLength="2" maxLength="40" required />
                 <span className="form__input-error username-error"></span>
               </label>
               <label className="form__field">
                 <input className="form__input form__input_type_vocation" type="text" name="about" id="vocation" placeholder="Укажите род деятельности"
-                  minlength="2" maxlength="200" required />
+                  minLength="2" maxLength="200" required />
                 <span className="form__input-error vocation-error"></span>
               </label>
             </fieldset>
@@ -34,11 +67,13 @@ function App() {
           name="new-card"
           title="Новое место"
           textsubmit="Создать"
+          isOpen={isAddPlacePopupOpen}
+          onClose={closePopups}
           children={
             <fieldset className="form__set">
               <label className="form__field">
                 <input className="form__input form__input_type_image-name" type="text" name="name" id="imagename" placeholder="Название"
-                  minlength="2" maxlength="30" required />
+                  minLength="2" maxLength="30" required />
                 <span className="form__input-error imagename-error"></span>
               </label>
               <label className="form__field">
@@ -48,7 +83,10 @@ function App() {
             </fieldset>
           }
         />
-        <ImagePopup />
+        <ImagePopup 
+          card={selectedCard}
+          onClose={closePopups}
+        />
         <PopupWithForm 
           name="confirm"
           title="Вы уверены?"
@@ -58,6 +96,8 @@ function App() {
           name="avatar"
           title="Обновить аватар"
           textsubmit="Сохранить"
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closePopups}
           children={
             <fieldset className="form__set">
               <label className="form__field">
@@ -67,28 +107,7 @@ function App() {
             </fieldset>
           }
         />
-
-        <template id="card">
-          <li className="card">
-            <img className="card__photo" src="#" alt="#" />
-            <div className="card__container">
-              <h2 className="card__title"></h2>
-              <div className="card__like-container">
-                <button
-                  className="card__button-like"
-                  type="button"
-                  aria-label="Нравится"
-                ></button>
-                <span className="card__like-counter">0</span>
-              </div>
-              <button
-                className="card__button-trash"
-                type="button"
-                aria-label="Удалить"
-              ></button>
-            </div>
-          </li>
-        </template>
+        <Footer />
       </div>
     </div>
   );
