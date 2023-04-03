@@ -41,9 +41,6 @@ function Main(props) {
         <button className="profile__add-button" onClick={onAddPlace} type="button" aria-label="Добавить"></button>
       </section>
       <section className="photo">
-        <ul className="photo__list"></ul>
-      </section>
-      <section className="photo">
         <ul className="photo__list">
           {cards.map(card => (<Card key={card._id} card={card} onCardClick={onCardClick} />))}
         </ul>
