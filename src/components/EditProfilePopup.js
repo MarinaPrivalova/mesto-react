@@ -1,9 +1,9 @@
 import React from "react";
 import PopupWithForm from "./PopupWithForm";
-import { CurrentUserContext, defaultCurrentUser } from "../contexts/CurrentUserContext";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function EditProfilePopup(props) {
-  const { isOpen, onClose } = props;
+  const { isOpen, onClose, isRenderLoading, renderLoading } = props;
   const currentUser = React.useContext(CurrentUserContext);
   const [name, setName] = React.useState(currentUser.name);
   const [description, setDescription] = React.useState(currentUser.about);
@@ -23,6 +23,8 @@ function EditProfilePopup(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    
+    renderLoading();
     /**Передать значения управляемых компонентов во внешний обработчик*/
     props.onUpdateUser({
       name,
@@ -38,6 +40,8 @@ function EditProfilePopup(props) {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      isRenderLoading={isRenderLoading}
+      renderLoadingButtonText="Сохранение..."
       children={
         <fieldset className="form__set">
           <label className="form__field">

@@ -3,18 +3,19 @@ import PopupWithForm from "./PopupWithForm";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 function EditAvatarPopup(props) {
-  const { isOpen, onClose, onUpdateAvatar } = props;
+  const { isOpen, onClose, onUpdateAvatar, isRenderLoading, renderLoading } = props;
   const currentUser = React.useContext(CurrentUserContext);
   const avatarRef = React.useRef(currentUser.avatar);
 
   /**Очистить форму от предыдущей ссылки */
   React.useEffect(() => {
     avatarRef.current.value = ''
-  }, [currentUser, isOpen]);
+  }, [isOpen]);
 
   function handleSubmit(e) {
     e.preventDefault();
 
+    renderLoading();
     onUpdateAvatar({
       avatar: avatarRef.current.value,
     });
@@ -28,6 +29,8 @@ function EditAvatarPopup(props) {
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={handleSubmit}
+      isRenderLoading={isRenderLoading}
+      renderLoadingButtonText="Обновление..."
       children={
         <fieldset className="form__set">
           <label className="form__field">

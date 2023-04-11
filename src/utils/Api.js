@@ -35,13 +35,24 @@ class Api {
       .then(this._handleReply)
   }
 
+  /**Обновить аватар*/
+  updateUserAvatar({ avatar }) {
+    return fetch(`${this._url}/users/me/avatar`,
+      {
+        headers: this._headers,
+        method: 'PATCH',
+        body: JSON.stringify({ avatar })
+      })
+      .then(this._handleReply)
+  }
+
   /**Добавить новую карточку*/
-  addNewCard(cardData) {
+  addNewCard({ name, link }) {
     return fetch(`${this._url}/cards`,
       {
         method: 'POST',
         headers: this._headers,
-        body: JSON.stringify({ name: cardData.name, link: cardData.link })
+        body: JSON.stringify({ name, link })
       })
       .then(this._handleReply)
   }
@@ -73,17 +84,6 @@ class Api {
         })
         .then(this._handleReply)
     }
-  }
-
-  /**Обновить аватар*/
-  updateUserAvatar({ avatar }) {
-    return fetch(`${this._url}/users/me/avatar`,
-      {
-        headers: this._headers,
-        method: 'PATCH',
-        body: JSON.stringify({ avatar })
-      })
-      .then(this._handleReply)
   }
 }
 
