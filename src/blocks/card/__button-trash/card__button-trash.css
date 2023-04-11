@@ -11,6 +11,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
+  visibility: hidden;
 }
 
 .card__button-trash:hover {

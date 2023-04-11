@@ -25,12 +25,12 @@ class Api {
   }
 
   /**Редактировать профиль*/
-  updateUserInfo(data) {
+  updateUserInfo({ name, about }) {
     return fetch(`${this._url}/users/me`,
       {
         method: 'PATCH',
         headers: this._headers,
-        body: JSON.stringify({ name: data.name, about: data.about })
+        body: JSON.stringify({ name, about })
       })
       .then(this._handleReply)
   }
@@ -56,24 +56,23 @@ class Api {
       .then(this._handleReply)
   }
 
-  /**Поставить лайк*/
-  setLike(id) {
-    return fetch(`${this._url}/cards/${id}/likes`,
-      {
-        method: 'PUT',
-        headers: this._headers
-      })
-      .then(this._handleReply)
-  }
-
-  /**Удалить лайк*/
-  deleteLike(id) {
-    return fetch(`${this._url}/cards/${id}/likes`,
-      {
-        method: 'DELETE',
-        headers: this._headers
-      })
-      .then(this._handleReply)
+  /**Поставить и удалить лайк*/
+  changeLikeCardStatus(id, isLiked) {
+    if (isLiked) {
+      return fetch(`${this._url}/cards/${id}/likes`,
+        {
+          method: 'PUT',
+          headers: this._headers,
+        })
+        .then(this._handleReply)
+    } else {
+      return fetch(`${this._url}/cards/${id}/likes`,
+        {
+          method: 'DELETE',
+          headers: this._headers,
+        })
+        .then(this._handleReply)
+    }
   }
 
   /**Обновить аватар*/
