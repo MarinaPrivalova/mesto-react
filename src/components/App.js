@@ -15,19 +15,19 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isCardPopupOpen, setIsCardPopupOpen] = React.useState(false);
   const [isDeleteCardPopupOpen, setIsDeleteCardPopupOpen] = React.useState(false);
 
   const [isRenderLoading, setIsRenderLoading] = React.useState(false);
 
   /**Переменные состояния для попапа открытия карточки*/
-  const [selectedCard, setSelectedCard] = React.useState(null);
+  const [selectedCard, setSelectedCard] = React.useState({});
 
   /**Переменная состояния пользователя*/
   const [currentUser, setCurrentUser] = React.useState(defaultCurrentUser);
 
   /**Переменная состояния карточек*/
   const [cards, setCards] = React.useState([]);
-  const [deletedCard, setDeletedCard] = React.useState("");
 
   React.useEffect(() => {
     api.getUserInfo()
@@ -62,19 +62,20 @@ function App() {
   }
   function handleCardClick(card) {
     setSelectedCard(card);
+    setIsCardPopupOpen(true);
   }
   function handleDeleteCardClick(card) {
+    setSelectedCard(card);
     setIsDeleteCardPopupOpen(true);
-    setDeletedCard(card);
   };
 
   function closePopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIsCardPopupOpen(false)
     setIsDeleteCardPopupOpen(false)
-    setSelectedCard(null);
-    setDeletedCard(null);
+    setSelectedCard({});
   }
 
   function handleCardLike(card) {
@@ -82,31 +83,31 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
     
     /**Отправить запрос в API и получить обновлённые данные карточки*/
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    });
+    api.changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((err) => { console.log(err) })
   } 
 
   function handleCardDelete() {
-    api.deleteCard(deletedCard._id)
-    .then(() => {
-      setCards((cards) => cards.filter((item) => item._id !== deletedCard._id))
-    })
-    .then(() => closePopups())
-    .catch((err) => { console.log(err) })
-    .finally(() => renderLoading())
+    api.deleteCard(selectedCard._id)
+      .then(() => {
+        setCards((cards) => cards.filter((item) => item._id !== selectedCard._id))
+      })
+      .then(() => closePopups())
+      .catch((err) => { console.log(err) })
+      .finally(() => renderLoading())
   }
 
   function handleAddCard(card) {
     api.addNewCard(card)
-    .then((newCard) => {
-      setCards([newCard, ...cards]);
-      closePopups();
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-    .finally(() => renderLoading())
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closePopups();
+      })
+      .catch((err) => { console.log(err) })
+      .finally(() => renderLoading())
   }
 
   /**Изменить данные пользователя*/
@@ -159,9 +160,11 @@ function App() {
             isRenderLoading={isRenderLoading}
             renderLoading={renderLoading}
           />
-          <ImagePopup 
-            card={selectedCard} 
-            onClose={closePopups} />
+          <ImagePopup
+            card={selectedCard}
+            isOpen={isCardPopupOpen}
+            onClose={closePopups}
+          />
           <DeletedCardPopup
             isOpen={isDeleteCardPopupOpen}
             onClose={closePopups}
